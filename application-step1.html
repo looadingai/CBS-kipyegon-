@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CABS Mobile Banking - Loan Application Step 1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background: #f4f6f9;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 480px;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .header {
+            background-color: #3b3a8a; /* Dark blue/purple */
+            color: white;
+            padding: 30px 25px 25px 25px;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .logo span {
+            color: #7cc544; /* Bright green */
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .step-dot.active {
+            background: #7cc544;
+            transform: scale(1.2);
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        h2 {
+            color: #3b3a8a;
+            margin-bottom: 5px;
+            font-size: 22px;
+        }
+        
+        .step-number {
+            color: #7cc544;
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            background: #fff;
+            color: #333;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #3b3a8a;
+            box-shadow: 0 0 0 3px rgba(59, 58, 138, 0.1);
+        }
+        
+        .loan-amount-display {
+            font-size: 32px;
+            font-weight: bold;
+            color: #3b3a8a;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .loan-amount-display::before {
+            content: "$ ";
+            font-size: 24px;
+            color: #7cc544;
+        }
+        
+        .amount-slider {
+            width: 100%;
+            margin: 15px 0;
+            accent-color: #3b3a8a;
+            cursor: pointer;
+        }
+        
+        .term-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .term-option {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .term-option:hover {
+            border-color: #3b3a8a;
+        }
+        
+        .term-option.selected {
+            border-color: #3b3a8a;
+            background: rgba(59, 58, 138, 0.08);
+            color: #3b3a8a;
+            font-weight: bold;
+        }
+        
+        .purpose-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .purpose-option {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .purpose-option:hover {
+            border-color: #3b3a8a;
+        }
+        
+        .purpose-option.selected {
+            border-color: #3b3a8a;
+            background: rgba(59, 58, 138, 0.08);
+            color: #3b3a8a;
+            font-weight: bold;
+        }
+        
+        .button-group {
+            margin-top: 30px;
+        }
+        
+        .btn-next {
+            background-color: #3b3a8a;
+            color: white;
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(59, 58, 138, 0.3);
+        }
+        
+        .btn-next:hover {
+            background-color: #2f2e70;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 12px;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">CABS<span>)</span></div>
+            <h1>Loan Application</h1>
+            <div class="step-indicator">
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <span class="step-number">Step 1 of 3</span>
+            <h2>Loan Details</h2>
+            
+            <div class="section">
+                <div class="section-title">Loan Type</div>
+                <select id="loanType">
+                    <option value="personal" selected>Personal Loan</option>
+                    <option value="business">Business Loan</option>
+                    <option value="education">Education Loan</option>
+                    <option value="emergency">Emergency Loan</option>
+                </select>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Loan Amount</div>
+                <div class="loan-amount-display" id="amountDisplay">5,000</div>
+                <input type="range" id="amountSlider" class="amount-slider" min="100" max="10000" value="5000" step="100">
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Loan Term</div>
+                <div class="term-options">
+                    <div class="term-option" data-months="3">3 Months</div>
+                    <div class="term-option" data-months="6">6 Months</div>
+                    <div class="term-option selected" data-months="12">12 Months</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Purpose of Loan</div>
+                <p style="color: #777; margin-bottom: 12px; font-size: 13px;">What will you use the loan for?</p>
+                <div class="purpose-options">
+                    <div class="purpose-option selected" data-purpose="food">Food</div>
+                    <div class="purpose-option" data-purpose="education">Education</div>
+                    <div class="purpose-option" data-purpose="medical">Medical</div>
+                    <div class="purpose-option" data-purpose="business">Business</div>
+                    <div class="purpose-option" data-purpose="emergency">Emergency</div>
+                    <div class="purpose-option" data-purpose="other">Other</div>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-next" onclick="nextStep()">Next Step</button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            © 2026 CABS. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        // Store application data
+        let applicationData = {
+            loanType: 'personal',
+            loanAmount: 5000,
+            loanTerm: 12,
+            purpose: 'food'
+        };
+        
+        // Initialize interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Amount slider
+            const amountSlider = document.getElementById('amountSlider');
+            const amountDisplay = document.getElementById('amountDisplay');
+            
+            amountSlider.addEventListener('input', function() {
+                const amount = parseInt(this.value);
+                amountDisplay.textContent = amount.toLocaleString();
+                applicationData.loanAmount = amount;
+            });
+            
+            // Loan type selection
+            document.getElementById('loanType').addEventListener('change', function() {
+                applicationData.loanType = this.value;
+            });
+            
+            // Term option selection
+            document.querySelectorAll('.term-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.term-option').forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    applicationData.loanTerm = parseInt(this.getAttribute('data-months'));
+                });
+            });
+            
+            // Purpose option selection
+            document.querySelectorAll('.purpose-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.purpose-option').forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    applicationData.purpose = this.getAttribute('data-purpose');
+                });
+            });
+        });
+        
+        function nextStep() {
+            localStorage.setItem('loanApplication', JSON.stringify(applicationData));
+            window.location.href = 'application-step2.html';
+        }
+    </script>
+</body>
+</html>

